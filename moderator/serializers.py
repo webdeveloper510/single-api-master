@@ -1,7 +1,7 @@
 from .models import *
 from rest_framework import serializers
 from auths.serializers import UserInformationSerializer
-
+from django.contrib.auth import get_user
 
 class CreateModelSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,13 +36,18 @@ class GirlSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(default)
 
     def get_age(self, girl):
+        print("girl" , girl)
         return girl.age()
 
     def get_liked(self, girl):
+        print("girl", girl)
         request = self.context.get('request')
         user = request.user
-        girl_like_obj = GirlLike.objects.filter(girl=girl, user=user, user_like=True).first()
-        if girl_like_obj:
+        print("request" , user)
+        
+        girl_like_obj = GirlLike.objects.filter(girl=girl).first()
+        print("girl_like_obj" , girl_like_obj)
+        if girl_like_obj.user_like:
             return True
         else:
             return False

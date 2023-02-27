@@ -1,6 +1,6 @@
 import decimal
 import json
-
+import random
 from rest_framework import viewsets
 from .models import *
 from .serializers import *
@@ -16,6 +16,7 @@ from rest_framework import filters
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from chat.models import Message
+from datetime import timedelta
 
 
 class GirlList(generics.ListCreateAPIView):
@@ -36,6 +37,7 @@ class GirlList(generics.ListCreateAPIView):
             end_age = 99
         start_date = datetime.now() - relativedelta(years=int(start_age))
         end_date = datetime.now() - relativedelta(years=(int(end_age) + 1))
+        print(Girl.objects.filter(birthday__gte=end_date, birthday__lte=start_date).all())
         return Girl.objects.filter(birthday__gte=end_date, birthday__lte=start_date).all()
 
 
@@ -88,7 +90,7 @@ class CustomersListView(generics.ListAPIView):
                                                is_active=True).all()
 
         new = self.request.GET.get('new', False)
-        print(new)
+        print("new",new)
         if new == '1':
 
             list_data = UserAccount.objects.filter(affiliate_moderator__customer__isnull=True, role='user',
@@ -304,16 +306,18 @@ class MessageStatisticView(generics.CreateAPIView):
 
         return JsonResponse(response_data, safe=False)
 
-
 class UserLike(generics.ListCreateAPIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.AllowAny]
     allowed_methods = ('GET', 'POST', 'PUT')
-
+    serializer_class = GirlSerializer
     def create(self, request, *args, **kwargs):
+        print("""=====""")
         user = request.user
-        request_data = json.loads(request.body)
+        request_data = json.loads(request.body) 
+        print('----------->' , request_data)
         girl = Girl.objects.filter(id=request_data['girl']).first()
+        print('girl', girl)
         girl_like_obj = GirlLike.objects.filter(girl=girl, user=user).first()
         if girl_like_obj:
             if girl_like_obj.user_like:
@@ -324,7 +328,7 @@ class UserLike(generics.ListCreateAPIView):
             girl_like_obj = GirlLike()
             girl_like_obj.girl = girl
             girl_like_obj.user = user
-            girl_like_obj.user_like = True
+            girl_like_obj.user_like = False
 
         girl_like_obj.save()
         return Response({"liked": girl_like_obj.user_like})
@@ -334,15 +338,15 @@ class LikedGirlListView(generics.ListCreateAPIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.AllowAny]
     allowed_methods = ('GET', 'POST', 'PUT')
-
-    def create(self, request, *args, **kwargs):
-        user = request.user
-        liked_girls_query = GirlLike.objects.filter(user=user, user_like=True).all()
+    serializer_class = GirlSerializer
+    def get_queryset(self):
+        user = self.request.user
+        print(user)
+        liked_girls_query = GirlLike.objects.filter(user_like=True).all()
         liked_girls = []
         for item in liked_girls_query:
             liked_girls.append(item.girl)
-        serializer = GirlSerializer(liked_girls, many=True, context={'request':request})
-        return Response(serializer.data)
+        return liked_girls
 
 
 class RandomGirl(generics.ListAPIView):
@@ -352,7 +356,15 @@ class RandomGirl(generics.ListAPIView):
     serializer_class = GirlSerializer
 
     def get_queryset(self):
-        random_girls = Girl.objects.exclude(username='admin').order_by('?')[:1]
+        one_week_ago = timezone.now() - timedelta(days=7)
+        print( timezone.now())
+        print(one_week_ago)
+        # Get up to 2 random girls added in the last week
+        random_girls = Girl.objects.exclude(
+            username='admin',
+            timestamp__lt=one_week_ago
+        ).order_by('timestamp')[:3]
+        print(random_girls)
         return random_girls
 
 

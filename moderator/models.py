@@ -1,6 +1,7 @@
 from django.db import models
 from auths.models import *
 from datetime import date
+from django.utils import timezone
 # Create your models here.
 
 GENDER_CHOICES = {
@@ -74,6 +75,7 @@ class Girl(models.Model):
     height = models.CharField(max_length=10, blank=True, null=True)
     about_me = models.TextField()
     online = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.username

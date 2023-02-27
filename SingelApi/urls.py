@@ -29,5 +29,5 @@ urlpatterns = [
     path('api/chat/', include('chat.urls', namespace='chat')),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
+    path('app/', include('app.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-

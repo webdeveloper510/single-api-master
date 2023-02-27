@@ -41,10 +41,11 @@ class ChatList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
+        print(user)
         status = self.request.GET.get('status', '')
         if status == 'assign':
-            return Chat.objects.filter(status__in=['assign', ], assigned_moderator=user).all()
-        if user.role == 'user':
+            # return Chat.objects.filter(status__in=['assign', ], assigned_moderator=user).all()
+        # if user.role == 'user':
             return Chat.objects.filter(customer=user).all()
         else:
             return Chat.objects.filter(status__in=['active', 'remind']).exclude(girl__username__exact='admin').all()

@@ -34,7 +34,7 @@ class ChatSerializer(serializers.ModelSerializer):
 
     def get_lobbyTime(self, chat):
         if chat.status == 'active':
-            return chat.messages.last().timestamp
+            return chat.messages.last().content
         elif chat.status == 'assign':
             return chat.assigned_timestamp
         elif chat.status == 'remind':

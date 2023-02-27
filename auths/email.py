@@ -6,12 +6,13 @@ from djoser.conf import settings
 
 
 class ActivationEmail(BaseEmailMessage):
+    print("HERE")
     template_name = "email/activation.html"
 
     def get_context_data(self):
         # ActivationEmail can be deleted
         context = super().get_context_data()
-
+        print("Context ActivationEmail" , context)
         user = context.get("user")
         context["uid"] = utils.encode_uid(user.pk)
         context["token"] = default_token_generator.make_token(user)
@@ -29,7 +30,7 @@ class PasswordResetEmail(BaseEmailMessage):
     def get_context_data(self):
         # PasswordResetEmail can be deleted
         context = super().get_context_data()
-
+        print(context)
         user = context.get("user")
         context["uid"] = utils.encode_uid(user.pk)
         context["token"] = default_token_generator.make_token(user)
