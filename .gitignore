@@ -135,6 +135,5 @@ auths/migrations/
 moderator/migrations/
 Admin/migrations/
 chat/migrations/
-SingelApi/settings.py
+
 model/
-settings.py
