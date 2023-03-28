@@ -15,42 +15,48 @@ class CreateModelPhotoSerializer(serializers.ModelSerializer):
         model = GirlPhoto
         fields = '__all__'
 
-
 class GirlSerializer(serializers.ModelSerializer):
-    avatar = serializers.SerializerMethodField()
-    age = serializers.SerializerMethodField()
-    liked = serializers.SerializerMethodField()
-
-    class Meta:
+     class Meta:
         model = Girl
         fields = '__all__'
 
-    def get_avatar(self, girl):
-        request = self.context.get('request')
 
-        girl_photo = girl.photo()
-        if girl_photo:
-            avatar = girl_photo.photo.url
-            return request.build_absolute_uri(avatar)
-        else:
-            default = '/media/model/default_model.png'
-            return request.build_absolute_uri(default)
+# class GirlSerializer(serializers.ModelSerializer):
+#     avatar = serializers.SerializerMethodField()
+#     age = serializers.SerializerMethodField()
+#     liked = serializers.SerializerMethodField()
 
-    def get_age(self, girl):    
-        print("girl" , girl)
-        return girl.age()
+#     class Meta:
+#         model = Girl
+#         fields = '__all__'
 
-    def get_liked(self, girl):
-        request = self.context.get('request')
-        user = request.user
-        print(user)
-        if user.is_authenticated:
-            print("-------------------->" ,user.is_authenticated)
-            girl_like_obj = GirlLike.objects.filter(girl=girl, user=user).first()
-            if girl_like_obj is not None and girl_like_obj.user_like:
-                return True
+#     def get_avatar(self, girl):
+#         request = self.context.get('request')
 
-        return False
+#         girl_photo = girl.photo()
+#         if girl_photo:
+#             avatar = girl_photo.photo.url
+#             return request.build_absolute_uri(avatar)
+#         else:
+#             default = '/media/model/default_model.png'
+#             return request.build_absolute_uri(default)
+
+#     def get_age(self, girl):    
+#         print("girl" , girl)
+#         return girl.age()
+
+#     def get_liked(self, girl):
+#         request = self.context.get('request')
+#         user = request.user
+#         print(user)
+        # if user.is_authenticated:
+        #     print("-------------------->" ,user.is_authenticated)
+        #     girl_like_obj = GirlLike.objects.filter(girl=girl, user=user).first()
+        #     if girl_like_obj is not None and girl_like_obj.user_like:
+        #         print("456")
+        #         return True
+
+#         return False
 
 
 

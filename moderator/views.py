@@ -17,28 +17,103 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from chat.models import Message
 from datetime import timedelta
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import action
 
+from distutils import errors
 
-class GirlList(generics.ListCreateAPIView):
+# class GirlList(generics.ListCreateAPIView):
+#     authentication_classes = [authentication.TokenAuthentication]
+#     permission_classes = [permissions.AllowAny]
+#     allowed_methods = ('GET', 'POST')
+#     serializer_class = CreateModelSerializer
+#     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+#     filterset_fields = ['county', 'city']
+#     search_fields = ['username']
+
+#     def get_queryset(self):
+#         start_age = self.request.GET.get('start_age', '18')
+#         end_age = self.request.GET.get('end_age', '99')
+#         if start_age == '':
+#             start_age = 18
+#         if end_age == '':
+#             end_age = 99
+#         start_date = datetime.now() - relativedelta(years=int(start_age))
+#         end_date = datetime.now() - relativedelta(years=(int(end_age) + 1))
+#         # print(Girl.objects.filter(birthday__gte=end_date, birthday__lte=start_date).all())
+#         return Girl.objects.filter(birthday__gte=end_date, birthday__lte=start_date).all()
+
+from rest_framework.views import APIView
+
+class GirlList(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.AllowAny]
-    allowed_methods = ('GET', 'POST')
-    serializer_class = CreateModelSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    filterset_fields = ['county', 'city']
-    search_fields = ['username']
+    @action(detail=False, methods=['post'])
+    def post(self, request, format=None):
+        serializer=GirlSerializer(data=request.data)
+        
+        if serializer.is_valid(raise_exception=True):
+            user=serializer.save()
+            
 
-    def get_queryset(self):
-        start_age = self.request.GET.get('start_age', '18')
-        end_age = self.request.GET.get('end_age', '99')
-        if start_age == '':
-            start_age = 18
-        if end_age == '':
-            end_age = 99
-        start_date = datetime.now() - relativedelta(years=int(start_age))
-        end_date = datetime.now() - relativedelta(years=(int(end_age) + 1))
-        print(Girl.objects.filter(birthday__gte=end_date, birthday__lte=start_date).all())
-        return Girl.objects.filter(birthday__gte=end_date, birthday__lte=start_date).all()
+            user = UserAccount.objects.get(id= serializer.data['creator'])
+            user.user = user
+
+            girl = Girl.objects.get(id= serializer.data['id'])
+            girl.girl = girl
+
+            girl_like_data=GirlLike.objects.create(user=user,girl=girl)
+            girl_like_object= GirlLike.objects.filter(girl=girl).values("user_like")
+            user_like=girl_like_object[0]['user_like']
+            dict_data={"id":serializer.data['id'],"username":serializer.data['username'],"email":serializer.data['email'],"first_name":serializer.data['first_name'],
+                       "last_name":serializer.data['last_name'],"birthday":serializer.data['birthday'],"gender":serializer.data['gender'],"seeking":serializer.data['seeking'],
+                       "status":serializer.data['status'],"county":serializer.data['county'],"city":serializer.data['city'],"hair_color":serializer.data['hair_color'],
+                       "eye_color":serializer.data['eye_color'],"smoking_habit":serializer.data['smoking_habit'],"drinking_habit":serializer.data['drinking_habit'],"sexual_position":serializer.data['sexual_position'],
+                       "ethnicity":serializer.data['ethnicity'],"children":serializer.data['children'],"body_type":serializer.data['body_type'],"height":serializer.data['height'],"about_me": serializer.data['about_me'],"online":serializer.data['online'],
+                       "timestamp":serializer.data['timestamp'],"creator":serializer.data['creator'],"liked":user_like}
+            return Response(dict_data)
+        return Response({errors:serializer.errors})
+
+    @action(detail=False, methods=['Get'])
+    def get(self, request, format=None):
+        snippets = Girl.objects.all()
+        serializer = GirlSerializer(snippets, many=True)
+        array=[]
+        for x in serializer.data:
+            id=x['id']
+            username=x['username']
+            email=x['email']
+            first_name=x['first_name']
+            last_name=x['last_name']
+            birthday=x['birthday']
+            gender=x['gender']
+            seeking=x['seeking']
+            status=x['status']
+            county=x['county']
+            city=x['city']
+            hair_color=x['hair_color']
+            eye_color=x['eye_color']
+            smoking_habit=x['smoking_habit']
+            drinking_habit=x['drinking_habit']
+            sexual_position=x['sexual_position']
+            ethnicity=x['ethnicity']
+            children=x['children']
+            body_type=x['body_type']
+            height=x['height']
+            about_me=x['about_me']
+            online=x['online']
+            timestamp=x['timestamp']
+            creator=x['creator']
+            girl_like_object= GirlLike.objects.filter(user=creator,girl=id).values("user_like")
+            user_like=girl_like_object[0]['user_like']
+            dict_data={"id":id,"username":username,"email":email,"first_name":first_name,
+                       "last_name":last_name,"birthday":birthday,"gender":gender,"seeking": seeking,
+                       "status":status,"county":county,"city":city,"hair_color":hair_color,
+                       "eye_color":eye_color,"smoking_habit":smoking_habit,"drinking_habit":drinking_habit,"sexual_position":sexual_position,
+                       "ethnicity":ethnicity,"children": children,"body_type": body_type,"height":height,"about_me": about_me,"online":online,
+                       "timestamp":timestamp,"creator":creator,"liked":user_like}
+            array.append(dict_data)
+        return Response(array)
 
 
 class GirlDetailView(generics.RetrieveUpdateDestroyAPIView):
