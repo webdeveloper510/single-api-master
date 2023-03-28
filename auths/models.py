@@ -98,12 +98,12 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
         ordering = ['-registered_at']
         verbose_name = 'Account'
 
-    def age(self):
-        today = date.today()
-        if self.birthday:
-            return today.year - self.birthday.year - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
-        else:
-            ''
+    # def age(self):
+    #     today = date.today()
+    #     if self.birthday:
+    #         return today.year - self.birthday.year - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
+    #     else:
+    #         ''
 
     def save(self, *args, **kwargs):
         print('self._state.adding', self._state.adding)
@@ -142,3 +142,4 @@ class Transactions(models.Model):
     price = models.DecimalField(max_digits=5, decimal_places=2)
     paid_at = models.DateTimeField(auto_now_add=True)
 
+ 

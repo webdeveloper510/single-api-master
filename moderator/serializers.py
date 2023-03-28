@@ -27,6 +27,7 @@ class GirlSerializer(serializers.ModelSerializer):
 
     def get_avatar(self, girl):
         request = self.context.get('request')
+
         girl_photo = girl.photo()
         if girl_photo:
             avatar = girl_photo.photo.url
@@ -35,22 +36,22 @@ class GirlSerializer(serializers.ModelSerializer):
             default = '/media/model/default_model.png'
             return request.build_absolute_uri(default)
 
-    def get_age(self, girl):
+    def get_age(self, girl):    
         print("girl" , girl)
         return girl.age()
 
     def get_liked(self, girl):
-        print("girl", girl)
         request = self.context.get('request')
         user = request.user
-        print("request" , user)
-        
-        girl_like_obj = GirlLike.objects.filter(girl=girl).first()
-        print("girl_like_obj" , girl_like_obj)
-        if girl_like_obj.user_like:
-            return True
-        else:
-            return False
+        print(user)
+        if user.is_authenticated:
+            print("-------------------->" ,user.is_authenticated)
+            girl_like_obj = GirlLike.objects.filter(girl=girl, user=user).first()
+            if girl_like_obj is not None and girl_like_obj.user_like:
+                return True
+
+        return False
+
 
 
 class GirlSimpleSerializer(serializers.ModelSerializer):

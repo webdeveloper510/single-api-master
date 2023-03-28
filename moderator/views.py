@@ -23,7 +23,7 @@ class GirlList(generics.ListCreateAPIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.AllowAny]
     allowed_methods = ('GET', 'POST')
-    serializer_class = GirlSerializer
+    serializer_class = CreateModelSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['county', 'city']
     search_fields = ['username']
@@ -311,7 +311,9 @@ class UserLike(generics.ListCreateAPIView):
     permission_classes = [permissions.AllowAny]
     allowed_methods = ('GET', 'POST', 'PUT')
     serializer_class = GirlSerializer
-    def create(self, request, *args, **kwargs):
+    queryset = GirlLike.objects.all()
+    print(queryset)
+    def create(self, request):
         print("""=====""")
         user = request.user
         request_data = json.loads(request.body) 
@@ -332,6 +334,8 @@ class UserLike(generics.ListCreateAPIView):
 
         girl_like_obj.save()
         return Response({"liked": girl_like_obj.user_like})
+
+
 
 
 class LikedGirlListView(generics.ListCreateAPIView):

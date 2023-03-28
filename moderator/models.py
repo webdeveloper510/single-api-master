@@ -86,7 +86,7 @@ class Girl(models.Model):
 
     def age(self):
         today = date.today()
-        return today.year - self.birthday.year - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
+        return  self.birthday
 
     def matches(self):
         query = GirlLike.objects.filter(girl=self, user_like=1, girl_like=1).all()
