@@ -114,12 +114,15 @@ class GirlList(APIView):
                        "timestamp":timestamp,"creator":creator,"liked":user_like}
             array.append(dict_data)
         return Response(array)
+    
+    #new till now not push on github
+    
 
 
 class GirlDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.AllowAny]
-    allowed_methods = ('GET', 'POST', 'DELETE', 'PUT')
+    allowed_methods = ( 'POST', 'DELETE', 'PUT')
     queryset = Girl.objects.all()
     serializer_class = GirlSerializer
 
