@@ -7,6 +7,7 @@ from moderator import views
 app_name = 'authentication'
 
 urlpatterns = [
+    
     # path('', LogIn.as_view(), name='login'),  
     path('model/<int:pk>/', views.GirlDetailView.as_view(), name='girl-detail'),#change name models  from model due to confusion 
     path('model/', views.GirlList.as_view()),
@@ -26,4 +27,3 @@ urlpatterns = [
     path('random-girl/', views.RandomGirl.as_view(), name='random-girl'),
     # path('notifications/', views.NotificationListView.as_view(), name='notifications'),
 ]
-

@@ -16,10 +16,11 @@ class CreateModelPhotoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class GirlSerializer(serializers.ModelSerializer):
-     class Meta:
+    
+    class Meta:
         model = Girl
         fields = '__all__'
-
+    
 
 # class GirlSerializer(serializers.ModelSerializer):
 #     avatar = serializers.SerializerMethodField()

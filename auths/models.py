@@ -98,12 +98,12 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
         ordering = ['-registered_at']
         verbose_name = 'Account'
 
-    # def age(self):
-    #     today = date.today()
-    #     if self.birthday:
-    #         return today.year - self.birthday.year - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
-    #     else:
-    #         ''
+    def age(self):
+        today = date.today()
+        if self.birthday:
+            return today.year - self.birthday.year - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
+        else:
+            ''
 
     def save(self, *args, **kwargs):
         print('self._state.adding', self._state.adding)
@@ -123,12 +123,12 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
 
 
 class Affiliate(models.Model):
-    customer = models.ForeignKey(UserAccount, on_delete=models.CASCADE, related_name='affiliate_moderator', unique=True)
+    customer = models.ForeignKey(UserAccount, on_delete=models.CASCADE, related_name='affiliate_moderator')
     moderator = models.ForeignKey(UserAccount, on_delete=models.CASCADE, related_name='affiliate_customer')
 
 
 class ModeratorSetting(models.Model):
-    moderator = models.ForeignKey(UserAccount, on_delete=models.CASCADE, related_name='moderator_setting', unique=True)
+    moderator = models.ForeignKey(UserAccount, on_delete=models.CASCADE, related_name='moderator_setting')
     message = models.DecimalField(max_digits=5, decimal_places=2, default='0.16')
     affiliate = models.IntegerField(default=35)
 
