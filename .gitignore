@@ -129,7 +129,7 @@ dmypy.json
 .pyre/
 
 .idea/
-static/
+
 media/
 auths/migrations/
 moderator/migrations/
