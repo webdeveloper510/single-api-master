@@ -21,6 +21,15 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import action
 
 from distutils import errors
+url="http://127.0.0.1:8000/media/"
+
+def calculate_age(birthdate):
+    today = date.today()
+    age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
+    return age
+
+
+
 
 # class GirlList(generics.ListCreateAPIView):
 #     authentication_classes = [authentication.TokenAuthentication]
@@ -44,7 +53,7 @@ from distutils import errors
 #         return Girl.objects.filter(birthday__gte=end_date, birthday__lte=start_date).all()
 
 from rest_framework.views import APIView
-
+from datetime import date
 class GirlList(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.AllowAny]
@@ -85,7 +94,7 @@ class GirlList(APIView):
             email=x['email']
             first_name=x['first_name']
             last_name=x['last_name']
-            birthday=x['birthday']
+            birthday=(x['birthday'])
             gender=x['gender']
             seeking=x['seeking']
             status=x['status']
@@ -104,65 +113,83 @@ class GirlList(APIView):
             online=x['online']
             timestamp=x['timestamp']
             creator=x['creator']
+
+
             girl_like_object= GirlLike.objects.filter(user=creator,girl=id).values("user_like")
             user_like=girl_like_object[0]['user_like']
+            girl_photo_detail=GirlPhoto.objects.filter(girl=id).values('photo')
+            girl_photo=girl_photo_detail[0]['photo']
+            if girl_photo is not None:
+                girl_photo=url+girl_photo
+            else:
+                girl_photo=None
             dict_data={"id":id,"username":username,"email":email,"first_name":first_name,
                        "last_name":last_name,"birthday":birthday,"gender":gender,"seeking": seeking,
                        "status":status,"county":county,"city":city,"hair_color":hair_color,
                        "eye_color":eye_color,"smoking_habit":smoking_habit,"drinking_habit":drinking_habit,"sexual_position":sexual_position,
                        "ethnicity":ethnicity,"children": children,"body_type": body_type,"height":height,"about_me": about_me,"online":online,
-                       "timestamp":timestamp,"creator":creator,"liked":user_like}
+                       "timestamp":timestamp,"creator":creator,"liked":user_like,"photo":girl_photo}
             array.append(dict_data)
         return Response(array)
     
-    #new till now not push on github
-    # @action(detail=False, methods=['Get'])
-    # def get(self,request,pk ,format=None):
+    
+   
 
-    #     if not Girl.objects.filter(id=pk).exists():
-    #             return JsonResponse({"message":"Not Found"})
-    #     else:
-    #         snippets = Girl.objects.all()
-    #         serializer = GirlSerializer(snippets, many=True)
-    #         array=[]
-    #         for x in serializer.data:
-    #             id=x['id']
-    #             username=x['username']
-    #             email=x['email']
-    #             first_name=x['first_name']
-    #             last_name=x['last_name']
-    #             birthday=x['birthday']
-    #             gender=x['gender']
-    #             seeking=x['seeking']
-    #             status=x['status']
-    #             county=x['county']
-    #             city=x['city']
-    #             hair_color=x['hair_color']
-    #             eye_color=x['eye_color']
-    #             smoking_habit=x['smoking_habit']
-    #             drinking_habit=x['drinking_habit']
-    #             sexual_position=x['sexual_position']
-    #             ethnicity=x['ethnicity']
-    #             children=x['children']
-    #             body_type=x['body_type']
-    #             height=x['height']
-    #             about_me=x['about_me']
-    #             online=x['online']
-    #             timestamp=x['timestamp']
-    #             creator=x['creator']
-    #             girl_like_object= GirlLike.objects.filter(user=creator,girl=id).values("user_like")
-    #             user_like=girl_like_object[0]['user_like']
-    #             if id==pk:
-    #                 dict_data={"id":id,"username":username,"email":email,"first_name":first_name,
-    #                         "last_name":last_name,"birthday":birthday,"gender":gender,"seeking": seeking,
-    #                         "status":status,"county":county,"city":city,"hair_color":hair_color,
-    #                         "eye_color":eye_color,"smoking_habit":smoking_habit,"drinking_habit":drinking_habit,"sexual_position":sexual_position,
-    #                         "ethnicity":ethnicity,"children": children,"body_type": body_type,"height":height,"about_me": about_me,"online":online,
-    #                         "timestamp":timestamp,"creator":creator,"liked":user_like}
-    #                 print(dict_data)
-    #         return Response(dict_data)
+class GetGirlDetailView(APIView):
+   authentication_classes = [authentication.TokenAuthentication]
+   permission_classes = [permissions.AllowAny]
+   @action(detail=False, methods=['Get'])
+   def get(self,request,pk ,format=None):
 
-
+        if not Girl.objects.filter(id=pk).exists():
+                return JsonResponse({"message":"Not Found"})
+        else:
+            snippets = Girl.objects.all()
+            serializer = GirlSerializer(snippets, many=True)
+            array=[]
+            for x in serializer.data:
+                id=x['id']
+                username=x['username']
+                email=x['email']
+                first_name=x['first_name']
+                last_name=x['last_name']
+                birthday=x['birthday']
+                gender=x['gender']
+                seeking=x['seeking']
+                status=x['status']
+                county=x['county']
+                city=x['city']
+                hair_color=x['hair_color']
+                eye_color=x['eye_color']
+                smoking_habit=x['smoking_habit']
+                drinking_habit=x['drinking_habit']
+                sexual_position=x['sexual_position']
+                ethnicity=x['ethnicity']
+                children=x['children']
+                body_type=x['body_type']
+                height=x['height']
+                about_me=x['about_me']
+                online=x['online']
+                timestamp=x['timestamp']
+                creator=x['creator']
+                girl_like_object= GirlLike.objects.filter(user=creator,girl=id).values("user_like")
+                user_like=girl_like_object[0]['user_like']
+                girl_photo_detail=GirlPhoto.objects.filter(girl=id).values('photo')
+                girl_photo=girl_photo_detail[0]['photo']
+                if girl_photo is not None:
+                    girl_photo=url+girl_photo
+                else:
+                    girl_photo=None
+                if id==pk:
+                    dict_data={"id":id,"username":username,"email":email,"first_name":first_name,
+                            "last_name":last_name,"birthday":birthday,"gender":gender,"seeking": seeking,
+                            "status":status,"county":county,"city":city,"hair_color":hair_color,
+                            "eye_color":eye_color,"smoking_habit":smoking_habit,"drinking_habit":drinking_habit,"sexual_position":sexual_position,
+                            "ethnicity":ethnicity,"children": children,"body_type": body_type,"height":height,"about_me": about_me,"online":online,
+                            "timestamp":timestamp,"creator":creator,"liked":user_like,"photo":girl_photo}
+                  
+            return Response(dict_data)
+        
 class GirlDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.AllowAny]
@@ -210,13 +237,14 @@ class CustomersListView(generics.ListAPIView):
         end_date = datetime.now() - relativedelta(years=(int(end_age) + 1))
         list_data = UserAccount.objects.filter(birthday__gte=end_date, birthday__lte=start_date, role='user',
                                                is_active=True).all()
-        print(list_data)
+      
         new = self.request.GET.get('new', False)
-        print("new",new)
+        
         if new == '1':
 
             list_data = UserAccount.objects.filter(affiliate_moderator__customer__isnull=True, role='user',
                                                    is_active=True).all()
+           
         return list_data
 
 

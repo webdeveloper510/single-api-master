@@ -50,12 +50,12 @@ class GirlSerializer(serializers.ModelSerializer):
 #         request = self.context.get('request')
 #         user = request.user
 #         print(user)
-        # if user.is_authenticated:
-        #     print("-------------------->" ,user.is_authenticated)
-        #     girl_like_obj = GirlLike.objects.filter(girl=girl, user=user).first()
-        #     if girl_like_obj is not None and girl_like_obj.user_like:
-        #         print("456")
-        #         return True
+#         if user.is_authenticated:
+#             print("-------------------->" ,user.is_authenticated)
+#             girl_like_obj = GirlLike.objects.filter(girl=girl, user=user).first()
+#             if girl_like_obj is not None and girl_like_obj.user_like:
+#                 print("456")
+#                 return True
 
 #         return False
 

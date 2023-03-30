@@ -95,7 +95,7 @@ class Girl(models.Model):
 
 class GirlPhoto(models.Model):
     girl = models.ForeignKey(Girl, on_delete=models.CASCADE, related_name='profile_photos', blank=True, null=True)
-    photo = models.FileField(upload_to='model')
+    photo = models.ImageField(upload_to='model/')
     private = models.BooleanField(default=False)
 
 
