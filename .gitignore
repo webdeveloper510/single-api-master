@@ -130,10 +130,9 @@ dmypy.json
 
 .idea/
 
-media/
+
 auths/migrations/
 moderator/migrations/
 Admin/migrations/
 chat/migrations/
 
-model/
