@@ -23,14 +23,6 @@ from rest_framework.decorators import action
 from distutils import errors
 url="http://127.0.0.1:8000/media/"
 
-def calculate_age(birthdate):
-    today = date.today()
-    age = today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
-    return age
-
-
-
-
 # class GirlList(generics.ListCreateAPIView):
 #     authentication_classes = [authentication.TokenAuthentication]
 #     permission_classes = [permissions.AllowAny]
@@ -89,6 +81,7 @@ class GirlList(APIView):
         serializer = GirlSerializer(snippets, many=True)
         array=[]
         for x in serializer.data:
+           
             id=x['id']
             username=x['username']
             email=x['email']
@@ -117,18 +110,21 @@ class GirlList(APIView):
 
             girl_like_object= GirlLike.objects.filter(user=creator,girl=id).values("user_like")
             user_like=girl_like_object[0]['user_like']
-            girl_photo_detail=GirlPhoto.objects.filter(girl=id).values('photo')
-            girl_photo=girl_photo_detail[0]['photo']
-            if girl_photo is not None:
-                girl_photo=url+girl_photo
+           
+            if GirlPhoto.objects.filter(girl=id).exists():
+             
+             girl_photo_detail=GirlPhoto.objects.filter(girl=id).values('photo')
+             girl_photo=girl_photo_detail[0]['photo']
+             girl_photo_data=url+girl_photo
             else:
-                girl_photo=None
+                girl_photo_data=None
+
             dict_data={"id":id,"username":username,"email":email,"first_name":first_name,
                        "last_name":last_name,"birthday":birthday,"gender":gender,"seeking": seeking,
                        "status":status,"county":county,"city":city,"hair_color":hair_color,
                        "eye_color":eye_color,"smoking_habit":smoking_habit,"drinking_habit":drinking_habit,"sexual_position":sexual_position,
                        "ethnicity":ethnicity,"children": children,"body_type": body_type,"height":height,"about_me": about_me,"online":online,
-                       "timestamp":timestamp,"creator":creator,"liked":user_like,"photo":girl_photo}
+                       "timestamp":timestamp,"creator":creator,"liked":user_like,"photo":girl_photo_data}
             array.append(dict_data)
         return Response(array)
     
@@ -175,27 +171,35 @@ class GetGirlDetailView(APIView):
                 girl_like_object= GirlLike.objects.filter(user=creator,girl=id).values("user_like")
                 user_like=girl_like_object[0]['user_like']
                 girl_photo_detail=GirlPhoto.objects.filter(girl=id).values('photo')
-                girl_photo=girl_photo_detail[0]['photo']
-                if girl_photo is not None:
-                    girl_photo=url+girl_photo
+                if GirlPhoto.objects.filter(girl=id).exists():
+             
+                    girl_photo_detail=GirlPhoto.objects.filter(girl=id).values('photo')
+                    girl_photo=girl_photo_detail[0]['photo']
+                    girl_photo_data=url+girl_photo
                 else:
-                    girl_photo=None
+                    girl_photo_data=None
                 if id==pk:
                     dict_data={"id":id,"username":username,"email":email,"first_name":first_name,
                             "last_name":last_name,"birthday":birthday,"gender":gender,"seeking": seeking,
                             "status":status,"county":county,"city":city,"hair_color":hair_color,
                             "eye_color":eye_color,"smoking_habit":smoking_habit,"drinking_habit":drinking_habit,"sexual_position":sexual_position,
                             "ethnicity":ethnicity,"children": children,"body_type": body_type,"height":height,"about_me": about_me,"online":online,
-                            "timestamp":timestamp,"creator":creator,"liked":user_like,"photo":girl_photo}
+                            "timestamp":timestamp,"creator":creator,"liked":user_like,"photo":girl_photo_data}
                   
             return Response(dict_data)
-        
+
+
+
+
 class GirlDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.AllowAny]
     allowed_methods = ( 'POST', 'DELETE', 'PUT')
     queryset = Girl.objects.all()
     serializer_class = GirlSerializer
+
+
+
 
 
 class GirlPhotoView(generics.ListCreateAPIView):

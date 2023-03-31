@@ -3,6 +3,7 @@ from rest_framework import serializers
 from auths.serializers import UserInformationSerializer
 from django.contrib.auth import get_user
 
+
 class CreateModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Girl

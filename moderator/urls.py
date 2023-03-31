@@ -25,5 +25,6 @@ urlpatterns = [
     path('user-like/', views.UserLike.as_view(), name='user-like'),
     path('liked-girls/', views.LikedGirlListView.as_view(), name='user-like'),
     path('random-girl/', views.RandomGirl.as_view(), name='random-girl'),
+    
     # path('notifications/', views.NotificationListView.as_view(), name='notifications'),
 ]
