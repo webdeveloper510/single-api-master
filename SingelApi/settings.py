@@ -123,12 +123,12 @@ WSGI_APPLICATION = 'SingelApi.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'singledb',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST':'127.0.0.1',
-        'PORT':'3306',
+    	'ENGINE': 'django.db.backends.mysql',
+		'NAME': 'sajtenAPI',
+		'USER': 'root',
+		'PASSWORD': '',
+		'HOST':'127.0.0.1',
+		'PORT':'3306',
     }
 }
 

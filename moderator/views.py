@@ -465,8 +465,8 @@ class UserLike(generics.ListCreateAPIView):
     permission_classes = [permissions.AllowAny]
     allowed_methods = ('GET', 'POST', 'PUT')
     serializer_class = GirlSerializer
-    queryset = GirlLike.objects.all()
-    print(queryset)
+    # queryset = GirlLike.objects.all()
+    # print(queryset)
     def create(self, request):
         print("""=====""")
         user = request.user
