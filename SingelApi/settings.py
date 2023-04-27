@@ -28,27 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1:8080' , 'localhost' , '213.188.153.139', '127.0.0.1' , 'singelsajten.se']
 
-# CORS_ORIGIN_ALLOW_ALL = False
-# CORS_ALLOW_CREDENTIALS = True
 
-
-# CORS_ORIGIN_WHITELIST = (
-#     'http://localhost:8080',  
-#     'http://213.188.153.139:8080',  # for network 
-#     'http://127.0.0.1:8080',  # for 127.0.0.1 (Developlemt)
-#     'http://213.188.153.139:8080',  # for network (Development)
-#     'http://127.0.0.1:8000',  
-#     'http://213.188.153.139:8000'
-# )
-
-# CSRF_TRUSTED_ORIGINS = [
-#     'http://127.0.0.1:8080',  
-#     'http://213.188.153.139:8080',  # for network 
-#     'http://localhost:8080',  # for localhost (Developlemt)
-#     'http://213.188.153.139:8080',  # for network (Development)
-#     'http://127.0.0.1:8000',
-#     'http://213.188.153.139:8000'
-# ]
  
 
 
@@ -126,7 +106,7 @@ DATABASES = {
     	'ENGINE': 'django.db.backends.mysql',
 		'NAME': 'sajtenAPI',
 		'USER': 'root',
-		'PASSWORD': '',
+		'PASSWORD': '1234',
 		'HOST':'127.0.0.1',
 		'PORT':'3306',
     }

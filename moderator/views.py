@@ -280,12 +280,14 @@ class AffiliateListView(generics.ListCreateAPIView):
         type = request.GET.get('type', '')
 
         moderator = request.GET.get('moderator', False)
+        print(moderator)
         if moderator:
             user = UserAccount.objects.filter(role=moderator).first()
+            print(user)
         else:
             user = request.user
 
-
+        print(user.role)    
         if type == 'all':
             affiliate_query = Affiliate.objects.all()
         elif user.role in ['moderator', 'admin']:
