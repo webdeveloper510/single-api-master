@@ -38,10 +38,11 @@ class ModeratorListView(generics.ListCreateAPIView):
         password = json.loads(request.body)['password']
 
         serializer = ModeratorCreateSerializer(data=json.loads(request.body))
+        print(serializer)
         if serializer.is_valid():
             obj = serializer.save()
             obj.set_password(password)
-            obj.role = 'moderator'
+            obj.role = json.loads(request.body)['role']
             obj.save()
 
             moderator_setting = ModeratorSetting()
