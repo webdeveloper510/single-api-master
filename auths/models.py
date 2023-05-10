@@ -73,7 +73,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     body_type = models.CharField(max_length=30, default='Ej angivet')
     height = models.CharField(max_length=10, blank=True, null=True)
     about_me = models.TextField(blank=True, null=True)
-
+    ip_address = models.GenericIPAddressField()
     objects = UserAccountManager()
 
     registered_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
@@ -81,7 +81,8 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     online = models.IntegerField(default=0)
 
     avatar = models.FileField(upload_to='customer', default='default_avatar.png')
-    coins = models.IntegerField(default=60)
+    coins = models.IntegerField(null=True, blank=True)
+    ip_address = models.CharField(max_length=50)
 
     USERNAME_FIELD = 'username'
 

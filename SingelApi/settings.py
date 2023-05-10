@@ -104,7 +104,7 @@ WSGI_APPLICATION = 'SingelApi.wsgi.application'
 DATABASES = {
     'default': {
     	'ENGINE': 'django.db.backends.mysql',
-		'NAME': 'sajtenAPI',
+		'NAME': 'NewTest',
 		'USER': 'root',
 		'PASSWORD': '1234',
 		'HOST':'127.0.0.1',
