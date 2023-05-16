@@ -21,6 +21,7 @@ from moderator.routers import router
 from django.conf import settings
 from django.conf.urls.static import static
 from datetime import date
+from auths.views import *
 
 urlpatterns = [
     path('api/moderator/', include('moderator.urls', namespace='moderator')),
@@ -30,6 +31,8 @@ urlpatterns = [
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
     path('app/', include('app.urls')),
+    path('change-password/', ChangePasswordView.as_view(), name='change-password'),
+
 ] 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
