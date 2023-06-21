@@ -32,7 +32,7 @@ urlpatterns = [
     path('auth/', include('djoser.urls.authtoken')),
     path('app/', include('app.urls')),
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
-
+    # path('token', MyObtainTokenPairView.as_view(), name='token_obtain_pair'),
 ] 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,

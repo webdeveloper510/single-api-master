@@ -83,7 +83,6 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     avatar = models.FileField(upload_to='customer', default='default_avatar.png')
     coins = models.IntegerField(null=True, blank=True)
     ip_address = models.CharField(max_length=50)
-
     USERNAME_FIELD = 'username'
 
     def get_full_name(self):

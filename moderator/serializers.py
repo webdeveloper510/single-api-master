@@ -17,7 +17,6 @@ class CreateModelPhotoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class GirlSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = Girl
         fields = '__all__'

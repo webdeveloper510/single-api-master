@@ -1,7 +1,6 @@
 from djoser.serializers import UserCreateSerializer 
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-
 User = get_user_model()
 
  
@@ -19,3 +18,4 @@ class UserInformationSerializer(UserCreateSerializer):
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
+

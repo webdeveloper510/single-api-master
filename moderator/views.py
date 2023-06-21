@@ -520,10 +520,7 @@ class RandomGirl(generics.ListAPIView):
         print( timezone.now())
         print(one_week_ago)
         # Get up to 2 random girls added in the last week
-        random_girls = Girl.objects.exclude(
-            username='admin',
-            timestamp__lt=one_week_ago
-        ).order_by('timestamp')[:3]
+        random_girls = Girl.objects.order_by('timestamp')[:3]
         print(random_girls)
         return random_girls
 
