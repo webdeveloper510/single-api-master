@@ -49,7 +49,7 @@ from datetime import date
 class GirlList(APIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.AllowAny]
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['post','get'])
     def post(self, request, format=None):
         serializer=GirlSerializer(data=request.data)
         
@@ -60,20 +60,25 @@ class GirlList(APIView):
             user = UserAccount.objects.get(id= serializer.data['creator'])
             user.user = user
 
-            girlId = Girl.objects.get(id= serializer.data['id'])
-            girlId.girlId = girlId
+            # girlId = Girl.objects.get(id= serializer.data['id'])
+            # girlId.girlId = girlId
 
-            girl_like_data=GirlLike.objects.create(user=user,girl=girlId)
-            girl_like_object= GirlLike.objects.filter(girl=serializer.data['id']).values("user_like")
-            user_like=girl_like_object[0]['user_like']
+            # girl_like_data=GirlLike.objects.create(user=user,girl=girlId)
+            # girl_like_object= GirlLike.objects.filter(girl=serializer.data['id']).values("user_like")
+            # print(girl_like_object) 
+            # user_like=girl_like_object[0]['user_like']
+            # print(user_like)
             dict_data={"id":serializer.data['id'],"username":serializer.data['username'],"email":serializer.data['email'],"first_name":serializer.data['first_name'],
                        "last_name":serializer.data['last_name'],"birthday":serializer.data['birthday'],"gender":serializer.data['gender'],"seeking":serializer.data['seeking'],
                        "status":serializer.data['status'],"county":serializer.data['county'],"city":serializer.data['city'],"hair_color":serializer.data['hair_color'],
                        "eye_color":serializer.data['eye_color'],"smoking_habit":serializer.data['smoking_habit'],"drinking_habit":serializer.data['drinking_habit'],"sexual_position":serializer.data['sexual_position'],
                        "ethnicity":serializer.data['ethnicity'],"children":serializer.data['children'],"body_type":serializer.data['body_type'],"height":serializer.data['height'],"about_me": serializer.data['about_me'],"online":serializer.data['online'],
-                       "timestamp":serializer.data['timestamp'],"creator":serializer.data['creator'],"liked":user_like}
+                       "timestamp":serializer.data['timestamp'],"creator":serializer.data['creator']}#,"liked":user_like}
+            print(dict_data)
             return Response(dict_data)
+        
         return Response({errors:serializer.errors})
+        
 
     @action(detail=False, methods=['Get'])
     def get(self, request, format=None):
@@ -108,8 +113,8 @@ class GirlList(APIView):
             creator=x['creator']
 
 
-            girl_like_object= GirlLike.objects.filter(user=creator,girl=id).values("user_like")
-            user_like=girl_like_object[0]['user_like']
+            # girl_like_object= GirlLike.objects.filter(user=creator,girl=id).values("user_like")
+            # user_like=girl_like_object[0]['user_like']
            
             if GirlPhoto.objects.filter(girl=id).exists():
              
@@ -124,7 +129,7 @@ class GirlList(APIView):
                        "status":status,"county":county,"city":city,"hair_color":hair_color,
                        "eye_color":eye_color,"smoking_habit":smoking_habit,"drinking_habit":drinking_habit,"sexual_position":sexual_position,
                        "ethnicity":ethnicity,"children": children,"body_type": body_type,"height":height,"about_me": about_me,"online":online,
-                       "timestamp":timestamp,"creator":creator,"liked":user_like,"photo":girl_photo_data}
+                       "timestamp":timestamp,"creator":creator,"photo":girl_photo_data}#"liked":user_like,
             array.append(dict_data)
         return Response(array)
     
@@ -168,8 +173,6 @@ class GetGirlDetailView(APIView):
                 online=x['online']
                 timestamp=x['timestamp']
                 creator=x['creator']
-                girl_like_object= GirlLike.objects.filter(user=creator,girl=id).values("user_like")
-                user_like=girl_like_object[0]['user_like']
                 girl_photo_detail=GirlPhoto.objects.filter(girl=id).values('photo')
                 if GirlPhoto.objects.filter(girl=id).exists():
              
@@ -184,10 +187,9 @@ class GetGirlDetailView(APIView):
                             "status":status,"county":county,"city":city,"hair_color":hair_color,
                             "eye_color":eye_color,"smoking_habit":smoking_habit,"drinking_habit":drinking_habit,"sexual_position":sexual_position,
                             "ethnicity":ethnicity,"children": children,"body_type": body_type,"height":height,"about_me": about_me,"online":online,
-                            "timestamp":timestamp,"creator":creator,"liked":user_like,"photo":girl_photo_data}
+                            "timestamp":timestamp,"creator":creator,"photo":girl_photo_data}
                   
             return Response(dict_data)
-
 
 
 
@@ -467,21 +469,18 @@ class UserLike(generics.ListCreateAPIView):
     permission_classes = [permissions.AllowAny]
     allowed_methods = ('GET', 'POST', 'PUT')
     serializer_class = GirlSerializer
-    # queryset = GirlLike.objects.all()
-    # print(queryset)
     def create(self, request):
-        print("""=====""")
         user = request.user
         request_data = json.loads(request.body) 
-        print('----------->' , request_data)
         girl = Girl.objects.filter(id=request_data['girl']).first()
-        print('girl', girl)
         girl_like_obj = GirlLike.objects.filter(girl=girl, user=user).first()
         if girl_like_obj:
             if girl_like_obj.user_like:
                 girl_like_obj.user_like = False
+
             else:
                 girl_like_obj.user_like = True
+
         else:
             girl_like_obj = GirlLike()
             girl_like_obj.girl = girl
@@ -505,23 +504,58 @@ class LikedGirlListView(generics.ListCreateAPIView):
         liked_girls_query = GirlLike.objects.filter(user_like=True).all()
         liked_girls = []
         for item in liked_girls_query:
+            print(item.girl)
             liked_girls.append(item.girl)
         return liked_girls
 
 
-class RandomGirl(generics.ListAPIView):
-    authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [permissions.AllowAny]
-    allowed_methods = ('GET', )
-    serializer_class = GirlSerializer
-
-    def get_queryset(self):
+class RandomGirl(APIView):
+   authentication_classes = [authentication.TokenAuthentication]
+   permission_classes = [permissions.AllowAny]
+   @action(detail=False, methods=['Get'])
+   def get(self,request ,format=None):
         one_week_ago = timezone.now() - timedelta(days=7)
-        print( timezone.now())
-        print(one_week_ago)
-        # Get up to 2 random girls added in the last week
-        random_girls = Girl.objects.order_by('timestamp')[:3]
-        print(random_girls)
-        return random_girls
+        random_girls = Girl.objects.exclude(username='admin',timestamp__lt=one_week_ago).order_by('timestamp')[:3].all()
+        serializer = GirlSerializer(random_girls, many=True)
+        array = []
+        for x in serializer.data:
+            id=x['id']
+            username=x['username']
+            email=x['email']
+            first_name=x['first_name']
+            last_name=x['last_name']
+            birthday=x['birthday']
+            gender=x['gender']
+            seeking=x['seeking']
+            status=x['status']
+            county=x['county']
+            city=x['city']
+            hair_color=x['hair_color']
+            eye_color=x['eye_color']
+            smoking_habit=x['smoking_habit']
+            drinking_habit=x['drinking_habit']
+            sexual_position=x['sexual_position']
+            ethnicity=x['ethnicity']
+            children=x['children']
+            body_type=x['body_type']
+            height=x['height']
+            about_me=x['about_me']
+            online=x['online']
+            timestamp=x['timestamp']
+            creator=x['creator']
+            girl_like_object= GirlLike.objects.filter(user=creator,girl=id).values("user_like")
+            user_like=girl_like_object[0]['user_like']
+            girl_photo_detail=GirlPhoto.objects.filter(girl=id).values('photo')
 
+            girl_photo_detail=GirlPhoto.objects.filter(girl=id).values('photo')
+            girl_photo=girl_photo_detail[0]['photo']
+            girl_photo_data=url+girl_photo
 
+            dict_data2={"id":id,"username":username,"email":email,"first_name":first_name,
+                    "last_name":last_name,"birthday":birthday,"gender":gender,"seeking": seeking,
+                    "status":status,"county":county,"city":city,"hair_color":hair_color,
+                    "eye_color":eye_color,"smoking_habit":smoking_habit,"drinking_habit":drinking_habit,"sexual_position":sexual_position,
+                    "ethnicity":ethnicity,"children": children,"body_type": body_type,"height":height,"about_me": about_me,"online":online,
+                    "timestamp":timestamp,"creator":creator,"liked":user_like,"avatar":girl_photo_data}
+            array.append(dict_data2)
+        return Response(array)
