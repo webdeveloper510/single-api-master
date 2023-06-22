@@ -21,7 +21,8 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import action
 
 from distutils import errors
-url="http://127.0.0.1:8000/media/"
+# url="http://127.0.0.1:8000/media/"
+url="http://singelsajten.se:8000/media/"
 
 # class GirlList(generics.ListCreateAPIView):
 #     authentication_classes = [authentication.TokenAuthentication]
