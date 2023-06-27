@@ -44,8 +44,8 @@ class ChatList(generics.ListCreateAPIView):
         print(user)
         status = self.request.GET.get('status', '')
         if status == 'assign':
-            # return Chat.objects.filter(status__in=['assign', ], assigned_moderator=user).all()
-        # if user.role == 'user':
+            return Chat.objects.filter(status__in=['assign', ], assigned_moderator=user).all()
+        if user.role == 'user':
             return Chat.objects.filter(customer=user).all()
         else:
             return Chat.objects.filter(status__in=['active', 'remind']).exclude(girl__username__exact='admin').all()
@@ -55,7 +55,6 @@ class ChatList(generics.ListCreateAPIView):
         customer_id = json.loads(request.body)['customer']
         girl = Girl.objects.filter(pk=girl_id).first()
         customer = UserAccount.objects.filter(id=customer_id).first()
-
         chat = Chat.objects.filter(girl=girl, customer=customer).first()
 
         if chat is None:

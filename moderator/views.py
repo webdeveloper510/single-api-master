@@ -337,21 +337,24 @@ class TransactionsListView(generics.ListCreateAPIView):
             user = UserAccount.objects.filter(username=moderator).first()
         else:
             user = request.user
+            print("user" , user)
         affiliated_customers = []
 
         if not year:
             today = datetime.now()
             year = today.year
             month = today.month
-
         for item in user.affiliate_customer.all():
             affiliated_customers.append(item.customer)
-
-        transactions = Transactions.objects.filter(customer__in=affiliated_customers, paid_at__year=year,
-                                                   paid_at__month=month).all()
+        transactions = Transactions.objects.filter(
+            customer__in=affiliated_customers,
+            paid_at__year=year,
+            paid_at__month=month
+        ).all()
         serializer = TransactionSerializer(transactions, many=True)
 
         return Response(serializer.data)
+
 
     def create(self, request, *args, **kwargs):
         data = json.loads(request.body)

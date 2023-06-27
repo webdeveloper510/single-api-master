@@ -79,10 +79,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'command': 'messages',
             'messages': messages_to_json(messages)
         }
+
         await self.send_message(content)
 
     async def new_message(self, data):
         try:
+            print("here---- NEW MESSAGE")
             message = Message.objects.create(
                 sender=get_sender(data['senderId']),
                 senderModel=get_sender_model(data['senderType'], data['chatId']),
@@ -126,28 +128,31 @@ class ChatConsumer(AsyncWebsocketConsumer):
     }
 
     async def connect(self):
-
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chat_%s' % self.room_name
+
+        # Join room group
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
         )
+        print("Here Connect")
+
         await self.accept()
 
     async def disconnect(self, close_code):
+        # Leave room group
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
         )
+        print("Here Disconnect")
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        print("data", data)
         await self.commands[data['command']](self, data)
 
     async def send_chat_message(self, message):
-        print("channel_layer:", self.channel_layer)
         await self.channel_layer.group_send(
             self.room_group_name,
             {
@@ -156,12 +161,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }
         )
 
-    async def send_message(self, message):
-        await self.send(text_data=json.dumps(message))
-
     async def chat_message(self, event):
-        print("send chat message", event)
         message = event['message']
+        # Send message to WebSocket
         await self.send(text_data=json.dumps(message))
 
 
@@ -210,10 +212,12 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def send_message(self, message):
         await self.send(text_data=json.dumps(message))
+        print("Here Send Message")
 
     async def chat_message(self, event):
         message = event['message']
         await self.send(text_data=json.dumps(message))
+        print("Here Chat Message")
 
 
 class LobbyConsumer(AsyncWebsocketConsumer):

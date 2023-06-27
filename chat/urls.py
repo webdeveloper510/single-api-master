@@ -18,5 +18,4 @@ urlpatterns = [
     path('assign/', views.AssignChatView.as_view(), name='assign'),
     path('update-coin/', views.UpdateCoin.as_view(), name='update-coin'),
     path('inactive/', views.InactiveChatView.as_view(), name='inactive'),
-
 ]

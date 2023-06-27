@@ -34,6 +34,14 @@ urlpatterns = [
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
     # path('token', MyObtainTokenPairView.as_view(), name='token_obtain_pair'),
 ] 
+from django.urls import re_path, path
+from chat import consumers
+
+websocket_urlpatterns = [
+    re_path(r'ws/notification/$', consumers.NotificationConsumer.as_asgi()),
+    re_path(r'ws/lobby/$', consumers.LobbyConsumer.as_asgi()),
+    re_path(r'ws/chat/(?P<room_name>\w+)/$', consumers.ChatConsumer.as_asgi()),
+]   
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)

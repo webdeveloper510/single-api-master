@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-c7zqtjq0!zn-gz(tszn&sc-lkw+xumt$6uo^3n2ykzjw2&%dox
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1:8080' , 'localhost' , '213.188.153.139', '127.0.0.1' , 'singelsajten.se']
+ALLOWED_HOSTS = ['127.0.0.1' , 'localhost' , '213.188.153.139', '127.0.0.1' , 'singelsajten.se']
 
 
  
@@ -50,10 +50,9 @@ INSTALLED_APPS = [
     'Admin',
     'app',
     'chat',
-    'moderator'
-
+    'moderator',
+    'channels'
 ]
-
 
 #configure DRF
 REST_FRAMEWORK = {
@@ -208,3 +207,13 @@ ACCOUNT_UNIQUE_EMAIL = True
 CORS_ALLOW_ALL_ORIGINS = True
 
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': "channels_redis.core.RedisChannelLayer",
+        'CONFIG': {
+            'hosts': [('singelsajten.se', 6379)],
+        },
+    },
+}
+WSGI_APPLICATION = 'SingelApi.wsgi.application'
+ASGI_APPLICATION = 'SingelApi.routing.application'
