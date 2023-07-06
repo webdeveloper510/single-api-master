@@ -150,6 +150,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
+        print("data",data)
         await self.commands[data['command']](self, data)
 
     async def send_chat_message(self, message):

@@ -501,15 +501,22 @@ class LikedGirlListView(generics.ListCreateAPIView):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.AllowAny]
     allowed_methods = ('GET', 'POST', 'PUT')
-    serializer_class = GirlSerializer
+    serializer_class = GirlSerializer2
     def get_queryset(self):
         user = self.request.user
         print(user)
         liked_girls_query = GirlLike.objects.filter(user_like=True).all()
         liked_girls = []
         for item in liked_girls_query:
-            print(item.girl)
+            print(item)
+            girl_photo_detail=GirlPhoto.objects.filter(girl=item.girl).values('photo')
+            girl_photo=girl_photo_detail[0]['photo']
+            girl_photo_data = {'girl': item.girl,'photo': url+girl_photo}
+            # girl_like_object= GirlLike.objects.filter(girl=item.id).values("user_like")
+            # user_like=girl_like_object[0]['user_like']
+            # # print(girl_photo_data , user_like)
             liked_girls.append(item.girl)
+            print(liked_girls)
         return liked_girls
 
 
@@ -549,7 +556,6 @@ class RandomGirl(APIView):
             creator=x['creator']
             girl_like_object= GirlLike.objects.filter(user=creator,girl=id).values("user_like")
             user_like=girl_like_object[0]['user_like']
-            girl_photo_detail=GirlPhoto.objects.filter(girl=id).values('photo')
 
             girl_photo_detail=GirlPhoto.objects.filter(girl=id).values('photo')
             girl_photo=girl_photo_detail[0]['photo']
